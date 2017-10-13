@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	    <script src="js/huaban.js"></script>
+	    <script src="js/jquery.min.js"></script>
+	    <script src="js/hover.js"></script>
+	    <script src="js/animate.js"></script>
+	</head>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			box-sizing: border-box;
+		}
+		body,html{
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		.box{
+			margin-top: 30px;
+			width: 1200px;
+			margin:0 auto;
+		}
+		.small2 li, .small5 li{
+			display: flex;
+			justify-content: center;
+		}
+		.box h2{
+			color: #666;
+			font-weight: 400;
+			font-size: 24px;
+			font-family: "微软雅黑";
+			border: 1px solid #ccc;
+			margin-top: 20px;
+		}
+		.box >div{
+			width: 15%;
+			float: left;
+			text-align: center;
+			position: relative;
+		}
+		.box .small5{
+			width: 25%;
+		}
+		.box ul li{
+			padding:5px 0px 0 0 ;
+			text-align: center;
+			border-bottom: 1px solid #ccc;
+			border-left: 1px solid #ccc;
+			border-right: 1px solid #ccc;
+			line-height: 20px;
+		}
+		.box ul{
+			position: absolute;
+	        width: 100%;
+	        height:0;
+	        overflow: hidden;
+	        top: 100%;
+		}
+		.box ul li div{
+			width: 100%;
+		}
+		.box div.small5 li div input{
+			display: inline-block;
+			width: 20%;
+		}
+		ul li div.active{
+			background:yellowgreen!important;
+			color: #fff;
+		}
+		.cbox{
+			position: absolute;
+			top:160px;
+			width: 1000px;
+			height: 600px;
+			margin:auto;
+			left: 0;
+			right: 0;
+		}
+		canvas{
+			border: 1px solid #333;
+		
+		}
+	</style>
+	<body>
+		<div class=box>
+			<div class=small1 >
+				<h2>功能</h2>
+				<ul>
+					<li>
+						<div type=new>新建画布</div>
+					</li>
+					<li>
+						<div type=save>保存画布</div>
+					</li>
+					<li>
+					    <div type=back>返回</div>	
+					</li>
+				</ul>
+			   
+			</div>
+			<div class="small2">
+				<h2>绘画方式</h2>
+				<ul>
+					<li>
+						<div type=line>画线</div>
+					    <div type=poly>画多边形</div>
+					</li>
+					<li>
+						<div type=circle>画圆</div>
+						<div type=radialCircle>画渐变圆</div>
+						
+					</li>
+					<li>
+						<div type=rect>画矩形</div> 
+						<div type=linearRect>画渐变矩形</div>
+					</li>
+				    <li>
+				    	<div type=delRect>橡皮擦</div>
+				    	<div type=radialRect>画圆角矩形</div>
+				    </li>
+				</ul>
+			</div>
+			<div class=small3>
+				<h2>填充方式</h2>
+				<ul>
+					<li><div type=fill>全填充</div></li>
+					<li><div type=stroke>只轮廓</div></li>
+				</ul>
+				
+				
+			</div>
+			<div class=small4>
+				<h2>渐变颜色</h2>
+				<ul>
+					<li><div>渐变第一个颜色<input type="color" /></div></li>
+					<li><div>渐变第二个颜色 <input type="color" /></div></li>
+				</ul>
+			
+			</div>
+			<div class=small5>
+				<h2>默认设置</h2>
+				<ul>
+					<li>
+						<div>画线的宽度<input type="text" value="5" aa='lineWidth'/></div>
+						<div>橡皮擦宽度<input type="text" value="10" aa='delWidth'/></div>
+					</li>
+					<li>
+						<div>圆角的半径 <input type="text" value="30" aa='radialR' /></div>
+						<div>多边形边数<input type="text" value="3" aa='n'/></div>
+					</li>
+				</ul>
+				
+			</div>
+			<div class=small6>
+				<h2>填充的颜色</h2>
+				<ul>
+					<li><div>填充的颜色<input type="color"/></div></li>
+					<li><div>轮廓的颜色 <input type="color"/></div></li>
+				</ul>
+			</div>
+		</div>
+		<div class='cbox'></div>
+	</body>
+</html>
+<script>
+	let divs = $(".box>div").get();
+    let t;
+  divs.forEach(function (obj) {
+      hover(obj, function () {
+          t = setTimeout(() => {
+              let ul = this.querySelector(`.box div>ul`);
+              //this下面的ul
+              let n = ul.querySelectorAll(`.box ul li `).length
+              //计算一下lu的高度
+              animate(ul, {height:n*40},500)
+          }, 200)
+      },
+      function () {
+          clearTimeout(t)
+          let ul = this.querySelector(`.box div ul`);
+          animate(ul, {height:0},500)
+         //卡顿，加延迟
+
+     })
+  })
+	
+	
+	
+	
+	
+	
+	let context;
+	let arr=[];
+	let newobj;
+	let currentpaint;
+	let newcanvas;
+	let cbox=$('.cbox').get(0)
+	//新建画布的按钮
+	$('div[type=new]').click(function(){
+		let canvas=$('canvas')
+		if(canvas.length){
+			let result=window.confirm("你要保存吗")
+			if(result){
+				let data=canvas[0].toDataURL('image/png')
+				location.href=data.replace('data:image/png','data:stream/octet')
+			}
+//			$(document.body).remove(canvas.eq(0))
+		   cbox.removeChild(canvas[0])
+		   arr=[];
+		}
+	    newcanvas=$('<canvas width=1000 height=500 >').appendTo(cbox).get(0)
+	    context=newcanvas.getContext('2d')	
+	    newobj=new Canvas(context)
+	    
+		newcanvas.onmousedown=function(e){
+	    	e.preventDefault()
+			let ox1=e.offsetX
+			let oy1=e.offsetY
+			console.log(ox1,oy1)
+			newcanvas.onmousemove=function(e){
+				let ox2=e.offsetX
+			    let oy2=e.offsetY
+			    if(currentpaint!='delRect'){
+			    	//因为出来橡皮擦功能外，其他的功能每次用都得清除画布上的信息，只显示最后一次画的内容
+                    //所以就写在if里面，减少代码量
+			    	    context.clearRect(0,0,newcanvas.width,newcanvas.height)
+					    if(arr.length>0){
+					    	context.putImageData(arr[arr.length-1],0,0)
+					    }
+			    	    switch(currentpaint){
+			    	    	case 'line':newobj.paintLine(ox1,oy1,ox2,oy2);break;
+			    	    	case 'rect':newobj.paintRect(ox1,oy1,ox2,oy2);break;
+			    	    	case 'linearRect':newobj.paintLinearRect(ox1,oy1,ox2,oy2);break;
+			    	    	case 'circle':newobj.paintCircle(ox1,oy1,ox2,oy2);break;
+			    	    	case 'radialCircle':newobj.paintRadialCircle(ox1,oy1,ox2,oy2);break;
+			    	    	case 'poly':newobj.paintPoly(ox1,oy1,ox2,oy2);break;
+			    	    	case 'radialRect':newobj.paintRadialRect(ox1,oy1,ox2,oy2);break;
+			            }
+			   }else{
+			   		newobj.paintDel(ox2,oy2)
+			   }
+			     
+		    }
+			newcanvas.onmouseup=function(){
+				arr.push(context.getImageData(0,0,newcanvas.width,newcanvas.height))
+				//复制画布上指定矩形的像素数据
+				newcanvas.onmousemove=null
+			}	
+			
+	    }	
+				
+	})
+	  //保存画布  
+	$('div[type=save]').click(function(){
+	  	let canvas=$('canvas').get()
+	  	if(canvas.length){
+	  		let data=canvas[0].toDataURL('image/png')
+		    location.href=data.replace('data:image/png','data:stream/octet')
+	  	}
+	 })
+	  //返回按钮
+	$('div[type=back]').click(function(){
+	   	if(context){
+			//如果有画笔
+			arr.pop()
+			if(arr.length<1){
+				alert("不能再返回了")
+				context.clearRect(0,0,newcanvas.width,newcanvas.height)
+			}else{
+				context.putImageData(arr[arr.length-1],0,0)
+//				将删除最后一个元素后的新数组的最后一个元素的信息保存在画板上
+			}
+		} 	
+	})
+	//第二排事件
+	$('div.small2 div').each(function(index,val){
+		$(val).click(function(){
+			$(val).parents('ul').find('div').removeClass('active')
+            $(this).addClass('active')
+			currentpaint=val.getAttribute('type')
+		})
+		
+	})
+	//第三排事件
+	$('div.small3 div,div.small1 div').each(function(index,val){
+		$(val).click(function(){
+			$(val).parents('ul').find('div').removeClass('active')
+            $(this).addClass('active')
+			newobj.way=val.getAttribute('type')
+		})
+	})
+	
+	//渐变颜色
+	$('div.small4 input').each(function(index,val){
+		$(val).change(function(){
+			if(index==0){
+			    newobj.colorArr[0]=val.value
+			}else{
+				newobj.colorArr[1]=val.value
+			}
+		})
+	})
+	//默认值改变
+	$('div.small5 input').each(function(index,val){
+		$(val).change(function(){
+			let aa=$(val).get(0).getAttribute('aa')
+			newobj[aa]=parseInt(val.value)
+		})
+	})
+	//轮廓颜色
+	$('div.small6 input').each(function(index,val){
+		$(val).change(function(){
+			if(index==0){
+			    newobj.fillColor=val.value
+			}else{
+				newobj.strokeColor=val.value
+			}
+		})
+	})
+</script>

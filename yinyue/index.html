@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/musicplay.css">
+	<link rel="stylesheet" type="text/css" href="font/iconfont.css">
+	<script src="js/jquery.min.js"></script>
+	<script src="js/yinyue.js"></script>
+</head>
+<body>
+<div id="box">
+	<audio src="music/李玉刚刚好遇见你.mp3"></audio>
+	<div class="list">
+		<h2>播放列表</h2>
+		<ul>
+			<li>
+				<span>播放状态</span>
+                <span>歌手</span>
+                <span>歌名</span>
+                <span>专辑</span>
+                <span>功能</span>
+			</li>
+		</ul>
+		<ul class=lists>
+		</ul>
+		<canvas id="canvas" width="760px" height="200px"></canvas>
+	</div>
+	<div id="lyric">
+				<ul style='top:0'></ul>
+			</div>
+	<div class="button">
+		<ul class="function">
+			<li class="previous"><span class="icon-shangyishou"></span></li>
+			<li class="play"><span class="icon-bofang
+"></span></li>
+			<li class="next"><span class=icon-xiayishou></span></li>
+		</ul>
+		<div class="icon">
+		</div>
+		<div class="status">
+			<div class="author">
+				<span>歌名</span>
+				<span>-------</span>
+				<span>歌手</span>
+			</div>
+			<div class="progress">
+				<div class="jindu">
+					<div class="load">
+					</div>
+					<div class="circle">
+					</div>
+					<div class="played">
+					</div>
+				</div>
+				<div class="time">
+					<span>00.00</span>
+					<span>/</span>
+					<span>04.12</span>
+				</div>
+			</div>
+			
+		</div>
+		<div class="volume">
+			<span class=icon-yinliang></span>
+			<div class=tiao>
+				<div class="jindu">
+					<div class="load">
+					</div>
+					<div class="circle">
+					</div>
+					<div class="played">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="menu">
+			<span class=icon-caidan></span>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+<script src="js/main.js"></script>
